@@ -10,52 +10,95 @@
     tools:ignore="ExtraText"
     tools:context=".ui.activity.FormularioProdutoActivity">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" />
 
-        <EditText
-            android:id="@+id/nome"
+        <ImageView
+            android:id="@+id/imageView2"
             android:layout_width="0dp"
-            android:layout_height="41dp"
-            android:layout_margin="16dp"
-            android:hint="Nome"
-            android:inputType="text"
-            android:text="formulario de produto"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/descricao"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Descrição"
-            android:inputType="text"
-            app:layout_constraintEnd_toEndOf="@id/nome"
-            app:layout_constraintStart_toStartOf="@id/nome"
-            app:layout_constraintTop_toBottomOf="@id/nome" />
-
-        <EditText
-            android:id="@+id/valor"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:hint="Valor"
-            android:inputType="numberDecimal"
-            app:layout_constraintEnd_toEndOf="@id/descricao"
-            app:layout_constraintStart_toStartOf="@id/descricao"
-            app:layout_constraintTop_toBottomOf="@id/descricao" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/imagem_padrao"
+            tools:srcCompat="@drawable/imagem_padrao" />
 
         <Button
             android:id="@+id/salvar"
             android:layout_width="0dp"
+
             android:layout_height="wrap_content"
             app:layout_constraintVertical_bias="0.5"
             android:layout_margin="16dp"
             android:text="Salvar"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/valor"
+            app:layout_constraintEnd_toEndOf="@id/valorInput"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nomeInput"
+            android:layout_width="409dp"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="206dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="nome"
+                android:layout_margin="16dp"
+                android:inputType="text"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/descricaoInput"
+            android:layout_width="409dp"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="206dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintEnd_toEndOf="@id/nomeInput"
+            app:layout_constraintStart_toStartOf="@id/nomeInput"
+            app:layout_constraintTop_toBottomOf="@id/nomeInput"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/descricao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:hint="Descrição"
+                android:inputType="text"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/valorInput"
+            android:layout_width="409dp"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="206dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintEnd_toEndOf="@id/descricaoInput"
+            app:layout_constraintStart_toStartOf="@id/descricaoInput"
+            app:layout_constraintTop_toBottomOf="@id/descricaoInput"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/valor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="valor"
+                android:layout_margin="16dp"
+                android:inputType="numberDecimal"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>
