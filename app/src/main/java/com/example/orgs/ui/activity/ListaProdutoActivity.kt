@@ -1,24 +1,21 @@
 package com.example.orgs.ui.activity
 
-import com.example.orgs.databinding.ActivityMainBinding
-
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import androidx.room.Room
+import androidx.lifecycle.lifecycleScope
 import com.example.orgs.R
 import com.example.orgs.database.database.AppDatabase
-import com.example.orgs.model.Produto
+import com.example.orgs.databinding.ActivityMainBinding
 import com.example.orgs.ui.reciclerview.adapter.ListaProdutosAdapter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class ListaProdutosActivity : AppCompatActivity() {
+
+class ListaProdutosActivity : UsuarioBaseActivity() {
 
     private val adapter = ListaProdutosAdapter(context = this)
     private val binding by lazy {
@@ -29,27 +26,21 @@ class ListaProdutosActivity : AppCompatActivity() {
         db.produtoDao()
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         configuraRecyclerView()
         configuraFab()
-        title = "Orgs"
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val db = AppDatabase.instancia(this)
-        val produtosDao = db.produtoDao()
-        val job = Job()
-        val scope = MainScope()
-        scope.launch{
-           val produtos = withContext(Dispatchers.IO){
-                produtosDao.buscaTodos()
+        lifecycleScope.launch {
+            launch {
+                usuario
+                    .filterNotNull()
+                    .collect { usuario ->
+                        Log.i("ListaProdutos", "onCreate: $usuario")
+                        buscaProdutosUsuario(usuario.id)
+                    }
             }
-            adapter.atualiza(produtos)
-            job.cancel()
         }
     }
 
@@ -59,27 +50,20 @@ class ListaProdutosActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val produtosOrdenado: List<Produto>? = when (item.itemId) {
-            R.id.menu_lista_produtos_ordenar_nome_asc ->
-                produtoDao.buscaTodosOrdenadorPorNomeAsc()
-            R.id.menu_lista_produtos_ordenar_nome_desc ->
-                produtoDao.buscaTodosOrdenadorPorNomeDesc()
-            R.id.menu_lista_produtos_ordenar_descricao_asc ->
-                produtoDao.buscaTodosOrdenadorPorDescricaoAsc()
-            R.id.menu_lista_produtos_ordenar_descricao_desc ->
-                produtoDao.buscaTodosOrdenadorPorDescricaoDesc()
-            R.id.menu_lista_produtos_ordenar_valor_asc ->
-                produtoDao.buscaTodosOrdenadorPorValorAsc()
-            R.id.menu_lista_produtos_ordenar_valor_desc ->
-                produtoDao.buscaTodosOrdenadorPorValorDesc()
-            R.id.menu_lista_produtos_ordenar_sem_ordem ->
-                produtoDao.buscaTodos()
-            else -> null
-        }
-        produtosOrdenado?.let {
-            adapter.atualiza(it)
+        when (item.itemId) {
+            R.id.menu_sair -> {
+                lifecycleScope.launch {
+                    deslogaUsuario()
+                }
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private suspend fun buscaProdutosUsuario(usuarioId : String) {
+        produtoDao.buscaTodosUsuario(usuarioId).collect { produtos ->
+            adapter.atualiza(produtos)
+        }
     }
 
     private fun configuraFab() {
@@ -95,11 +79,9 @@ class ListaProdutosActivity : AppCompatActivity() {
     }
 
     private fun configuraRecyclerView() {
-
         val recyclerView = binding.recycle
         recyclerView.adapter = adapter
         adapter.quandoClicaNoItem = {
-
             val intent = Intent(
                 this,
                 DetalhesProdutoActivity::class.java
@@ -109,5 +91,6 @@ class ListaProdutosActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
 }
 

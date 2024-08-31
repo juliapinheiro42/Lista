@@ -6,25 +6,20 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.orgs.R
 import com.example.orgs.database.database.AppDatabase
 import com.example.orgs.databinding.ActivityDetalhesProdutoBinding
 import com.example.orgs.extensions.Carregar
 import com.example.orgs.extensions.formataParaMoedaBrasileira
 import com.example.orgs.model.Produto
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class DetalhesProdutoActivity : AppCompatActivity() {
 
 
     private var idProduto: Long = 0L
     private  var ProdutoCarregado: Produto? = null
-    private var scope = CoroutineScope(Dispatchers.IO)
-
     private val binding by lazy {
         ActivityDetalhesProdutoBinding.inflate(layoutInflater)
     }
@@ -43,14 +38,13 @@ class DetalhesProdutoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        scope.launch {
-            ProdutoCarregado = produtoDao.buscaPorId(idProduto)
-            withContext(Dispatchers.Main){
+        lifecycleScope.launch {
+            produtoDao.buscaPorId(idProduto).collect { produtoEncontrado ->
+                ProdutoCarregado = produtoEncontrado
                 ProdutoCarregado?.let {
                     preencheCampos(it)
                 } ?: finish()
             }
-
         }
 
     }
@@ -81,13 +75,12 @@ class DetalhesProdutoActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
           when (item.itemId) {
               R.id.menu_remover -> {
-               scope.launch {
-                   ProdutoCarregado?.let {
-                       produtoDao.delete(it)
-
-                   }
-                   finish()
-               }
+                  ProdutoCarregado?.let {
+                      lifecycleScope.launch {
+                          produtoDao.delete(it)
+                          finish()
+                      }
+                  }
 
               }
 

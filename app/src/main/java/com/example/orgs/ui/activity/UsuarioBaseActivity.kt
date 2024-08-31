@@ -1,15 +1,15 @@
-package br.com.alura.orgs.ui.activity
+package com.example.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
-import br.com.alura.orgs.database.AppDatabase
-import br.com.alura.orgs.extensions.vaiPara
-import br.com.alura.orgs.model.Usuario
-import br.com.alura.orgs.preferences.dataStore
-import br.com.alura.orgs.preferences.usuarioLogadoPreferences
+import com.example.orgs.database.database.AppDatabase
+import com.example.orgs.extensions.vaiPara
+import com.example.orgs.model.Usuario
+import com.example.orgs.preferences.dataStore
+import com.example.orgs.preferences.usuarioLogadoPreferences
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -18,8 +18,8 @@ abstract class UsuarioBaseActivity : AppCompatActivity() {
     private val usuarioDao by lazy {
         AppDatabase.instancia(this).usuarioDao()
     }
-    private var _usuario: MutableStateFlow<Usuario?> = MutableStateFlow(null)
-    protected var usuario: StateFlow<Usuario?> = _usuario
+    private val _usuario: MutableStateFlow<Usuario?> = MutableStateFlow(null)
+    protected val usuario: StateFlow<Usuario?> = _usuario
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +39,10 @@ abstract class UsuarioBaseActivity : AppCompatActivity() {
     private suspend fun buscaUsuario(usuarioId: String) {
             _usuario.value = usuarioDao
                 .buscaPorId(usuarioId)
-                .firstOrNull()
+                .firstOrNull().also {
+                    _usuario.value = it
+                }
+
     }
 
     protected suspend fun deslogaUsuario() {

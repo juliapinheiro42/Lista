@@ -60,11 +60,13 @@ android {
 dependencies {
 
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.datastore.core.android)
     val room_version = "2.6.1"
 
     implementation("androidx.room:room-runtime:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
